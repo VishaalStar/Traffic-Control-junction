@@ -15,10 +15,10 @@ import { AlertCircle } from "lucide-react"
 
 export default function JunctionControl() {
   const [selectedPole, setSelectedPole] = useState<string | null>(null)
-  const [selectedTimeZone, setSelectedTimeZone] = useState<number | null>(null)
 
   // All 8 poles
   const allPoles = ["P1A", "P1B", "P2A", "P2B", "P3A", "P3B", "P4A", "P4B"]
+  const [selectedTimeZone, setSelectedTimeZone] = useState<number | null>(null)
 
   // Simplified pole names for display
   const poles = ["P1", "P2", "P3", "P4"]
@@ -31,6 +31,7 @@ export default function JunctionControl() {
       startTime: "08:00",
       endTime: "10:00",
       sequence: "1,2,3,4,5,6,7",
+      blinkEnabled: false,
       timePeriods: {
         P1A: { red: 60, yellow: 5, greenLeft: 30, greenStraight: 25, greenRight: 20, yellowBlink: 1 },
         P1B: { red: 60, yellow: 5, greenLeft: 30, greenStraight: 25, greenRight: 20, yellowBlink: 1 },
@@ -48,6 +49,7 @@ export default function JunctionControl() {
       startTime: "16:00",
       endTime: "19:00",
       sequence: "8,9,10,11,12,13,14",
+      blinkEnabled: false,
       timePeriods: {
         P1A: { red: 60, yellow: 5, greenLeft: 30, greenStraight: 25, greenRight: 20, yellowBlink: 1 },
         P1B: { red: 60, yellow: 5, greenLeft: 30, greenStraight: 25, greenRight: 20, yellowBlink: 1 },
@@ -64,20 +66,28 @@ export default function JunctionControl() {
   // State for time zone validation errors
   const [timeZoneErrors, setTimeZoneErrors] = useState<string[]>([])
 
-  // Update the priorities state to use simplified pole names
+  // Update the priorities state to use all 8 poles instead of simplified pole names
   const [priorities, setPriorities] = useState({
-    P1: { greenLeft: 1, greenStraight: 2, greenRight: 3 },
-    P2: { greenLeft: 3, greenStraight: 1, greenRight: 2 },
-    P3: { greenLeft: 3, greenStraight: 2, greenRight: 1 },
-    P4: { greenLeft: 2, greenStraight: 3, greenRight: 1 },
+    P1A: { greenLeft: 1, greenStraight: 2, greenRight: 3 },
+    P1B: { greenLeft: 1, greenStraight: 2, greenRight: 3 },
+    P2A: { greenLeft: 3, greenStraight: 1, greenRight: 2 },
+    P2B: { greenLeft: 3, greenStraight: 1, greenRight: 2 },
+    P3A: { greenLeft: 3, greenStraight: 2, greenRight: 1 },
+    P3B: { greenLeft: 3, greenStraight: 2, greenRight: 1 },
+    P4A: { greenLeft: 2, greenStraight: 3, greenRight: 1 },
+    P4B: { greenLeft: 2, greenStraight: 3, greenRight: 1 },
   })
 
   // Update the signalStatus state to use simplified pole names
   const [signalStatus, setSignalStatus] = useState<Record<string, string>>({
-    P1: "red",
-    P2: "red",
-    P3: "red",
-    P4: "red",
+    P1A: "red",
+    P1B: "red",
+    P2A: "red",
+    P2B: "red",
+    P3A: "red",
+    P3B: "red",
+    P4A: "red",
+    P4B: "red",
   })
 
   const [controlMode, setControlMode] = useState<"auto" | "manual" | "semi">("auto")
@@ -89,6 +99,7 @@ export default function JunctionControl() {
   const [simulateOnHardware, setSimulateOnHardware] = useState(false)
   const [userTimingDialogOpen, setUserTimingDialogOpen] = useState(false)
   const [userTimingValue, setUserTimingValue] = useState(3000)
+  const [activeControlButton, setActiveControlButton] = useState<string | null>(null)
 
   // Add a new state for connection status
   const [connectionStatus, setConnectionStatus] = useState<string>("disconnected")
@@ -100,10 +111,12 @@ export default function JunctionControl() {
     // Calculate total time for each pole in each time zone
     const totalTimes: Record<string, number> = {}
     const yellowTimes: Record<string, number> = {}
+    const timeZoneTotals: number[] = []
 
     timeZones.forEach((zone, zoneIndex) => {
       // Track yellow times for this zone
       const zoneYellowTimes: number[] = []
+      let zoneTotal = 0
 
       allPoles.forEach((pole) => {
         const periods = zone.timePeriods[pole]
@@ -119,9 +132,17 @@ export default function JunctionControl() {
         const key = `${zoneIndex}-${pole}`
         totalTimes[key] = total
 
+        // Use the first pole's total for the zone total
+        if (pole === allPoles[0]) {
+          zoneTotal = total
+        }
+
         // Track yellow time for validation
         zoneYellowTimes.push(periods.yellow)
       })
+
+      // Add this zone's total to the array
+      timeZoneTotals.push(zoneTotal)
 
       // Check if all yellow times in this zone are the same
       const firstYellowTime = zoneYellowTimes[0]
@@ -143,6 +164,16 @@ export default function JunctionControl() {
         const [zoneIndex, pole] = key.split("-")
         errors.push(
           `Invalid Settings: Time Zone ${Number(zoneIndex) + 1}, Pole ${pole} has different total time (${total}s vs ${firstTotal}s)`,
+        )
+      }
+    }
+
+    // Check if all time zones have the same total time
+    const firstZoneTotal = timeZoneTotals[0]
+    for (let i = 1; i < timeZoneTotals.length; i++) {
+      if (timeZoneTotals[i] !== firstZoneTotal) {
+        errors.push(
+          `Invalid Settings: Time Zone ${i + 1} has different total time (${timeZoneTotals[i]}s) than Time Zone 1 (${firstZoneTotal}s). All time zones must have the same total time.`,
         )
       }
     }
@@ -364,10 +395,17 @@ export default function JunctionControl() {
       value: color,
     })
 
-    toast({
-      title: `All Lights Changed`,
-      description: `All lights switched to ${color}.`,
-    })
+    if (color === "off") {
+      toast({
+        title: `All Lights Turned Off`,
+        description: `All lights have been turned off.`,
+      })
+    } else {
+      toast({
+        title: `All Lights Changed`,
+        description: `All lights switched to ${color}.`,
+      })
+    }
   }
 
   const handleTimeZoneNameChange = (index: number, newName: string) => {
@@ -526,6 +564,32 @@ export default function JunctionControl() {
     toast({
       title: "User Timings Applied",
       description: `Custom timing of ${userTimingValue / 1000} seconds has been applied.`,
+    })
+  }
+
+  // Add a function to handle blink mode toggle for time zones
+  const handleTimeZoneBlinkToggle = (timeZoneId: number, enabled: boolean) => {
+    const newZones = [...timeZones]
+    const zoneIndex = newZones.findIndex((zone) => zone.id === timeZoneId)
+    if (zoneIndex === -1) return
+
+    newZones[zoneIndex].blinkEnabled = enabled
+    setTimeZones(newZones)
+
+    // Create and send JSON for time zone blink mode change
+    jsonService.sendCommand({
+      command: "update_timezone_blink",
+      target: "system",
+      action: "update_timezone_blink",
+      value: {
+        timeZoneId: timeZoneId,
+        blinkEnabled: enabled,
+      },
+    })
+
+    toast({
+      title: `Blink Mode ${enabled ? "Enabled" : "Disabled"}`,
+      description: `Blink mode has been ${enabled ? "enabled" : "disabled"} for ${newZones[zoneIndex].name}.`,
     })
   }
 
@@ -714,12 +778,14 @@ export default function JunctionControl() {
               {controlMode === "manual" && (
                 <>
                   <h3 className="font-bold mb-2">Pole Selection</h3>
-                  <div className="grid grid-cols-2 gap-2">
-                    {poles.map((pole) => (
+                  <div className="grid grid-cols-4 gap-2">
+                    {allPoles.map((pole) => (
                       <Button
                         key={pole}
                         variant={selectedPole === pole ? "default" : "outline"}
                         onClick={() => handlePoleSelect(pole)}
+                        size="sm"
+                        className="text-xs"
                       >
                         {pole}
                       </Button>
@@ -982,6 +1048,38 @@ export default function JunctionControl() {
                   >
                     Yellow
                   </Button>
+                  <Button
+                    onClick={() => {
+                      if (!selectedPole) return
+
+                      // Toggle the yellow blink mode for this pole
+                      const newStatus = signalStatus[selectedPole] === "yellowBlink" ? "red" : "yellowBlink"
+
+                      setSignalStatus((prev) => ({
+                        ...prev,
+                        [selectedPole]: newStatus,
+                      }))
+
+                      // Send command to the selected pole
+                      jsonService.sendCommand({
+                        command: "signal_control",
+                        target: selectedPole,
+                        action: newStatus === "yellowBlink" ? "yellow_blink_on" : "yellow_blink_off",
+                        value: newStatus === "yellowBlink" ? "1" : "0",
+                      })
+
+                      toast({
+                        title: `Yellow Blink ${newStatus === "yellowBlink" ? "Activated" : "Deactivated"}`,
+                        description: `Yellow blink mode has been ${newStatus === "yellowBlink" ? "turned ON" : "turned OFF"} for ${selectedPole}.`,
+                      })
+                    }}
+                    variant={selectedPole && signalStatus[selectedPole] === "yellowBlink" ? "default" : "outline"}
+                    className={`${selectedPole && signalStatus[selectedPole] === "yellowBlink" ? "bg-yellow-500 hover:bg-yellow-600 text-black" : "border-yellow-500 text-yellow-700"} h-auto py-1 text-xs sm:text-sm col-span-2`}
+                    disabled={!selectedPole}
+                    size="sm"
+                  >
+                    Yellow Blink
+                  </Button>
                 </div>
 
                 <div className="grid grid-cols-1 gap-2 mt-4">
@@ -1035,53 +1133,93 @@ export default function JunctionControl() {
               </Card>
             )}
 
-            {controlMode === "manual" && (
-              <Card className="p-4 mt-4">
-                <h4 className="font-medium mb-2">Control All Signals</h4>
-                <div className="grid grid-cols-3 gap-2 mb-3">
-                  <Button
-                    onClick={() => handleAllLights("green")}
-                    className="w-full bg-green-500 hover:bg-green-600 text-white font-medium text-xs sm:text-sm shadow-md"
-                    size="sm"
-                  >
-                    All Green
-                  </Button>
-                  <Button
-                    onClick={() => handleAllLights("yellow")}
-                    className="w-full bg-yellow-500 hover:bg-yellow-600 text-black font-medium text-xs sm:text-sm shadow-md"
-                    size="sm"
-                  >
-                    All Yellow
-                  </Button>
-                  <Button
-                    onClick={() => handleAllLights("red")}
-                    className="w-full bg-red-500 hover:bg-red-600 text-white font-medium text-xs sm:text-sm shadow-md"
-                    size="sm"
-                  >
-                    All Red
-                  </Button>
-                </div>
-                <div className="grid grid-cols-2 gap-2">
-                  <Button
-                    variant={isYellowBlinkMode ? "default" : "outline"}
-                    onClick={handleYellowBlinkMode}
-                    className="w-full text-xs sm:text-sm bg-yellow-100 hover:bg-yellow-200 border border-yellow-300 font-medium shadow-md"
-                    size="sm"
-                  >
-                    Yellow Blink Mode
-                    <span className="text-xs ml-1">(All Poles)</span>
-                  </Button>
-                  <Button
-                    variant={isAllLightBlinkMode ? "default" : "outline"}
-                    onClick={handleAllLightBlinkMode}
-                    className="w-full text-xs sm:text-sm bg-blue-100 hover:bg-blue-200 border border-blue-300 font-medium shadow-md"
-                    size="sm"
-                  >
-                    All Light Blink
-                  </Button>
-                </div>
-              </Card>
-            )}
+            <Card className="p-4 mt-4">
+              <h4 className="font-medium mb-2">Control All Signals</h4>
+              <div className="grid grid-cols-3 gap-2 mb-3">
+                <Button
+                  onClick={() => {
+                    if (activeControlButton === "green") {
+                      // If already active, deactivate it
+                      setActiveControlButton(null)
+                      handleAllLights("off")
+                    } else {
+                      // Activate this button and deactivate others
+                      setActiveControlButton("green")
+                      handleAllLights("green")
+                    }
+                  }}
+                  className={`w-full ${
+                    activeControlButton === "green"
+                      ? "bg-green-500 hover:bg-green-600 text-white"
+                      : "bg-gray-100 hover:bg-gray-200 text-green-700 border border-green-300"
+                  } font-medium text-xs sm:text-sm shadow-md`}
+                  size="sm"
+                >
+                  All Green
+                </Button>
+                <Button
+                  onClick={() => {
+                    if (activeControlButton === "yellow") {
+                      // If already active, deactivate it
+                      setActiveControlButton(null)
+                      handleAllLights("off")
+                    } else {
+                      // Activate this button and deactivate others
+                      setActiveControlButton("yellow")
+                      handleAllLights("yellow")
+                    }
+                  }}
+                  className={`w-full ${
+                    activeControlButton === "yellow"
+                      ? "bg-yellow-500 hover:bg-yellow-600 text-black"
+                      : "bg-gray-100 hover:bg-gray-200 text-yellow-700 border border-yellow-300"
+                  } font-medium text-xs sm:text-sm shadow-md`}
+                  size="sm"
+                >
+                  All Yellow
+                </Button>
+                <Button
+                  onClick={() => {
+                    if (activeControlButton === "red") {
+                      // If already active, deactivate it
+                      setActiveControlButton(null)
+                      handleAllLights("off")
+                    } else {
+                      // Activate this button and deactivate others
+                      setActiveControlButton("red")
+                      handleAllLights("red")
+                    }
+                  }}
+                  className={`w-full ${
+                    activeControlButton === "red"
+                      ? "bg-red-500 hover:bg-red-600 text-white"
+                      : "bg-gray-100 hover:bg-gray-200 text-red-700 border border-red-300"
+                  } font-medium text-xs sm:text-sm shadow-md`}
+                  size="sm"
+                >
+                  All Red
+                </Button>
+              </div>
+              <div className="grid grid-cols-2 gap-2">
+                <Button
+                  variant={isYellowBlinkMode ? "default" : "outline"}
+                  onClick={handleYellowBlinkMode}
+                  className="w-full text-xs sm:text-sm bg-yellow-100 hover:bg-yellow-200 border border-yellow-300 font-medium shadow-md"
+                  size="sm"
+                >
+                  Yellow Blink Mode
+                  <span className="text-xs ml-1">(All Poles)</span>
+                </Button>
+                <Button
+                  variant={isAllLightBlinkMode ? "default" : "outline"}
+                  onClick={handleAllLightBlinkMode}
+                  className="w-full text-xs sm:text-sm bg-blue-100 hover:bg-blue-200 border border-blue-300 font-medium shadow-md"
+                  size="sm"
+                >
+                  All Light Blink
+                </Button>
+              </div>
+            </Card>
           </TabsContent>
 
           <TabsContent value="timezones" className="space-y-4">
@@ -1191,6 +1329,21 @@ export default function JunctionControl() {
                       }}
                     />
                     <p className="text-xs text-muted-foreground mt-1">Enter route numbers 1-14 separated by commas</p>
+                  </div>
+
+                  {/* Add blink mode toggle */}
+                  <div className="flex items-center space-x-2 mb-4 p-2 bg-yellow-50 border border-yellow-200 rounded">
+                    <Switch
+                      id={`blink-mode-${zone.id}`}
+                      checked={zone.blinkEnabled}
+                      onCheckedChange={(checked) => handleTimeZoneBlinkToggle(zone.id, checked)}
+                    />
+                    <Label htmlFor={`blink-mode-${zone.id}`} className="font-medium text-yellow-800">
+                      Enable Blink Mode for this Time Zone
+                    </Label>
+                    <div className="text-xs text-yellow-700 ml-2">
+                      {zone.blinkEnabled ? "(Will override route sequence)" : "(Normal route sequence active)"}
+                    </div>
                   </div>
 
                   <div className="mt-4">
@@ -1374,6 +1527,7 @@ export default function JunctionControl() {
                       startTime: "00:00",
                       endTime: "00:00",
                       sequence: "1,2,3,4,5,6,7,8,9,10,11,12,13,14",
+                      blinkEnabled: false,
                       timePeriods: { ...firstZoneTimePeriods },
                     }
 
@@ -1433,14 +1587,14 @@ export default function JunctionControl() {
               <p className="text-sm text-muted-foreground mb-2">Set priorities for green signals for each pole.</p>
 
               <div className="space-y-4">
-                {Object.keys(priorities).map((pole) => (
+                {allPoles.map((pole) => (
                   <div key={pole} className="border p-3 rounded">
                     <h4 className="font-medium mb-2">{pole}</h4>
                     <div className="space-y-2">
                       <div className="flex items-center gap-2">
                         <Label className="w-32">GREEN LEFT:</Label>
                         <Select
-                          value={priorities[pole as keyof typeof priorities].greenLeft.toString()}
+                          value={priorities[pole as keyof typeof priorities]?.greenLeft.toString() || "1"}
                           onValueChange={(value) => handlePriorityChange(pole, "greenLeft", Number.parseInt(value))}
                         >
                           <SelectTrigger className="w-20">
@@ -1456,7 +1610,7 @@ export default function JunctionControl() {
                       <div className="flex items-center gap-2">
                         <Label className="w-32">GREEN STRAIGHT:</Label>
                         <Select
-                          value={priorities[pole as keyof typeof priorities].greenStraight.toString()}
+                          value={priorities[pole as keyof typeof priorities]?.greenStraight.toString() || "1"}
                           onValueChange={(value) => handlePriorityChange(pole, "greenStraight", Number.parseInt(value))}
                         >
                           <SelectTrigger className="w-20">
@@ -1472,7 +1626,7 @@ export default function JunctionControl() {
                       <div className="flex items-center gap-2">
                         <Label className="w-32">GREEN RIGHT:</Label>
                         <Select
-                          value={priorities[pole as keyof typeof priorities].greenRight.toString()}
+                          value={priorities[pole as keyof typeof priorities]?.greenRight.toString() || "1"}
                           onValueChange={(value) => handlePriorityChange(pole, "greenRight", Number.parseInt(value))}
                         >
                           <SelectTrigger className="w-20">
