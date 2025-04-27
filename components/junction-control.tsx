@@ -740,49 +740,6 @@ export default function JunctionControl() {
                 </Button>
               </div>
 
-              <div className="flex gap-2 mb-4">
-                <Button onClick={handleSetUserConfiguredTimings} className="flex-1">
-                  Set User Configured Timings
-                </Button>
-                <Button
-                  className="flex-1 bg-blue-600 hover:bg-blue-700 text-white"
-                  onClick={async () => {
-                    try {
-                      // Show loading toast
-                      toast({
-                        title: "Sending to Raspberry Pi...",
-                        description: "Sending all configuration to Raspberry Pi",
-                      })
-
-                      // Send the update
-                      const success = await jsonService.sendJsonToRaspberryPi()
-
-                      if (success) {
-                        toast({
-                          title: "Update Successful",
-                          description: "All settings have been sent to the Raspberry Pi",
-                        })
-                      } else {
-                        toast({
-                          title: "Update Failed",
-                          description: "Failed to send settings to the Raspberry Pi",
-                          variant: "destructive",
-                        })
-                      }
-                    } catch (error) {
-                      console.error("Error updating Raspberry Pi:", error)
-                      toast({
-                        title: "Update Error",
-                        description: `Error: ${error instanceof Error ? error.message : "Unknown error"}`,
-                        variant: "destructive",
-                      })
-                    }
-                  }}
-                >
-                  Update Raspberry Pi
-                </Button>
-              </div>
-
               {blinkMode && (
                 <div className="mb-4">
                   <Label htmlFor="yellow-blink-rate">Yellow Blink Rate (seconds)</Label>
@@ -1703,7 +1660,6 @@ export default function JunctionControl() {
                       })
                     }
                   }}
-                  disabled={timeZoneErrors.length > 0}
                 >
                   Update
                 </Button>

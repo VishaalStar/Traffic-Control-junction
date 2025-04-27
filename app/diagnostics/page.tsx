@@ -1,7 +1,11 @@
+"use client"
+
 import DiagnosticsPanel from "@/components/diagnostics-panel"
 import Link from "next/link"
 import { Button } from "@/components/ui/button"
-import { Home, Settings, Activity, Cpu, FileJson, Radio } from "lucide-react"
+import { Home, Settings, Activity, Cpu, FileJson, Radio, Upload } from "lucide-react"
+import { toast } from "@/components/ui/use-toast"
+import { jsonService } from "@/lib/json-service"
 
 export default function DiagnosticsPage() {
   return (
@@ -39,6 +43,46 @@ export default function DiagnosticsPage() {
               <span className="hidden sm:inline">Control Settings</span>
             </Button>
           </Link>
+          <Button
+            variant="primary"
+            size="sm"
+            className="flex items-center gap-1 bg-blue-600 hover:bg-blue-700 text-white"
+            onClick={async () => {
+              try {
+                // Show loading toast
+                toast({
+                  title: "Sending to Raspberry Pi...",
+                  description: "Sending configuration data to Raspberry Pi",
+                })
+
+                // Send the update
+                const success = await jsonService.sendJsonToRaspberryPi()
+
+                if (success) {
+                  toast({
+                    title: "Update Successful",
+                    description: "All settings have been sent to the Raspberry Pi",
+                  })
+                } else {
+                  toast({
+                    title: "Update Failed",
+                    description: "Failed to send settings to the Raspberry Pi",
+                    variant: "destructive",
+                  })
+                }
+              } catch (error) {
+                console.error("Error updating Raspberry Pi:", error)
+                toast({
+                  title: "Update Error",
+                  description: `Error: ${error instanceof Error ? error.message : "Unknown error"}`,
+                  variant: "destructive",
+                })
+              }
+            }}
+          >
+            <Upload className="h-4 w-4" />
+            <span className="hidden sm:inline">Update</span>
+          </Button>
           <Link href="/json-viewer">
             <Button
               variant="secondary"
