@@ -12,7 +12,7 @@ import { Textarea } from "@/components/ui/textarea"
 import { toast } from "@/components/ui/use-toast"
 import { jsonService, type ControlModeSettings } from "@/lib/json-service"
 import Link from "next/link"
-import { Home, Activity, FileJson, Radio } from "lucide-react"
+import { Home, Activity, FileJson, Radio, Upload } from "lucide-react"
 
 export default function ControlSettingsPage() {
   const [settings, setSettings] = useState<ControlModeSettings | null>(null)
@@ -76,6 +76,37 @@ export default function ControlSettingsPage() {
               <span className="hidden sm:inline">JSON Data</span>
             </Button>
           </Link>
+          <Button
+            variant="primary"
+            size="sm"
+            className="flex items-center gap-1 bg-blue-600 hover:bg-blue-700 text-white"
+            onClick={() => {
+              toast({
+                title: "Updating Raspberry Pi",
+                description: "Sending configuration data to Raspberry Pi...",
+              })
+
+              try {
+                // Send all JSON data to Raspberry Pi
+                jsonService.sendJsonToRaspberryPi()
+
+                toast({
+                  title: "Update Successful",
+                  description: "Configuration data sent to Raspberry Pi successfully.",
+                })
+              } catch (error) {
+                console.error("Error sending data to Raspberry Pi:", error)
+                toast({
+                  title: "Update Failed",
+                  description: "Failed to send configuration data to Raspberry Pi.",
+                  variant: "destructive",
+                })
+              }
+            }}
+          >
+            <Upload className="h-4 w-4" />
+            <span className="hidden sm:inline">Update</span>
+          </Button>
           <Link href="/control-settings">
             <Button variant="default" size="sm" className="flex items-center gap-1">
               <Radio className="h-4 w-4" />

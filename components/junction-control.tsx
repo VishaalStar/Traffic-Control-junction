@@ -740,6 +740,49 @@ export default function JunctionControl() {
                 </Button>
               </div>
 
+              <div className="flex gap-2 mb-4">
+                <Button onClick={handleSetUserConfiguredTimings} className="flex-1">
+                  Set User Configured Timings
+                </Button>
+                <Button
+                  className="flex-1 bg-blue-600 hover:bg-blue-700 text-white"
+                  onClick={async () => {
+                    try {
+                      // Show loading toast
+                      toast({
+                        title: "Sending to Raspberry Pi...",
+                        description: "Sending all configuration to Raspberry Pi",
+                      })
+
+                      // Send the update
+                      const success = await jsonService.sendJsonToRaspberryPi()
+
+                      if (success) {
+                        toast({
+                          title: "Update Successful",
+                          description: "All settings have been sent to the Raspberry Pi",
+                        })
+                      } else {
+                        toast({
+                          title: "Update Failed",
+                          description: "Failed to send settings to the Raspberry Pi",
+                          variant: "destructive",
+                        })
+                      }
+                    } catch (error) {
+                      console.error("Error updating Raspberry Pi:", error)
+                      toast({
+                        title: "Update Error",
+                        description: `Error: ${error instanceof Error ? error.message : "Unknown error"}`,
+                        variant: "destructive",
+                      })
+                    }
+                  }}
+                >
+                  Update Raspberry Pi
+                </Button>
+              </div>
+
               {blinkMode && (
                 <div className="mb-4">
                   <Label htmlFor="yellow-blink-rate">Yellow Blink Rate (seconds)</Label>
@@ -1082,9 +1125,9 @@ export default function JunctionControl() {
                   </Button>
                 </div>
 
-                <div className="grid grid-cols-1 gap-2 mt-4">
+                <div className="grid grid-cols-2 gap-2 mt-4">
                   <Button
-                    className="w-full text-xs sm:text-sm"
+                    className="text-xs sm:text-sm"
                     onClick={() => {
                       // Create and send JSON for signal status update
                       jsonService.sendCommand({
@@ -1108,7 +1151,46 @@ export default function JunctionControl() {
                     Update JSON Data
                   </Button>
                   <Button
-                    className="w-full text-xs sm:text-sm"
+                    className="text-xs sm:text-sm bg-blue-600 hover:bg-blue-700 text-white"
+                    onClick={async () => {
+                      try {
+                        // Show loading toast
+                        toast({
+                          title: "Sending to Raspberry Pi...",
+                          description: "Sending current configuration to Raspberry Pi",
+                        })
+
+                        // Send the update
+                        const success = await jsonService.sendJsonToRaspberryPi()
+
+                        if (success) {
+                          toast({
+                            title: "Update Successful",
+                            description: "All settings have been sent to the Raspberry Pi",
+                          })
+                        } else {
+                          toast({
+                            title: "Update Failed",
+                            description: "Failed to send settings to the Raspberry Pi",
+                            variant: "destructive",
+                          })
+                        }
+                      } catch (error) {
+                        console.error("Error updating Raspberry Pi:", error)
+                        toast({
+                          title: "Update Error",
+                          description: `Error: ${error instanceof Error ? error.message : "Unknown error"}`,
+                          variant: "destructive",
+                        })
+                      }
+                    }}
+                    disabled={!selectedPole}
+                    size="sm"
+                  >
+                    Update
+                  </Button>
+                  <Button
+                    className="col-span-2 w-full text-xs sm:text-sm"
                     variant="outline"
                     disabled={!selectedPole}
                     size="sm"
@@ -1577,6 +1659,54 @@ export default function JunctionControl() {
                 >
                   Update Time Zones JSON Data
                 </Button>
+                <Button
+                  className="bg-blue-600 hover:bg-blue-700 text-white"
+                  onClick={async () => {
+                    try {
+                      // Validate time zones before updating
+                      if (!validateTimeZones()) {
+                        toast({
+                          title: "Validation Error",
+                          description: "Cannot update time zones with invalid settings. Please fix the errors first.",
+                          variant: "destructive",
+                        })
+                        return
+                      }
+
+                      // Show loading toast
+                      toast({
+                        title: "Sending to Raspberry Pi...",
+                        description: "Sending time zone configuration to Raspberry Pi",
+                      })
+
+                      // Send the update
+                      const success = await jsonService.sendJsonToRaspberryPi()
+
+                      if (success) {
+                        toast({
+                          title: "Update Successful",
+                          description: "Time zone settings have been sent to the Raspberry Pi",
+                        })
+                      } else {
+                        toast({
+                          title: "Update Failed",
+                          description: "Failed to send time zone settings to the Raspberry Pi",
+                          variant: "destructive",
+                        })
+                      }
+                    } catch (error) {
+                      console.error("Error updating Raspberry Pi:", error)
+                      toast({
+                        title: "Update Error",
+                        description: `Error: ${error instanceof Error ? error.message : "Unknown error"}`,
+                        variant: "destructive",
+                      })
+                    }
+                  }}
+                  disabled={timeZoneErrors.length > 0}
+                >
+                  Update
+                </Button>
               </div>
             </Card>
           </TabsContent>
@@ -1663,6 +1793,43 @@ export default function JunctionControl() {
                   }}
                 >
                   Update Priorities JSON Data
+                </Button>
+                <Button
+                  className="bg-blue-600 hover:bg-blue-700 text-white"
+                  onClick={async () => {
+                    try {
+                      // Show loading toast
+                      toast({
+                        title: "Sending to Raspberry Pi...",
+                        description: "Sending priority configuration to Raspberry Pi",
+                      })
+
+                      // Send the update
+                      const success = await jsonService.sendJsonToRaspberryPi()
+
+                      if (success) {
+                        toast({
+                          title: "Update Successful",
+                          description: "Priority settings have been sent to the Raspberry Pi",
+                        })
+                      } else {
+                        toast({
+                          title: "Update Failed",
+                          description: "Failed to send priority settings to the Raspberry Pi",
+                          variant: "destructive",
+                        })
+                      }
+                    } catch (error) {
+                      console.error("Error updating Raspberry Pi:", error)
+                      toast({
+                        title: "Update Error",
+                        description: `Error: ${error instanceof Error ? error.message : "Unknown error"}`,
+                        variant: "destructive",
+                      })
+                    }
+                  }}
+                >
+                  Update
                 </Button>
               </div>
             </Card>

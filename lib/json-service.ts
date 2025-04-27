@@ -683,7 +683,7 @@ class JsonService {
   // Add this function to the jsonService class to enable sending JSON to Raspberry Pi
 
   /**
-   * Send the JSON configuration to the Raspberry Pi
+   * Send the JSON configuration to the Raspberry Pi using Ethernet or network
    */
   public async sendJsonToRaspberryPi(): Promise<boolean> {
     try {
@@ -691,11 +691,10 @@ class JsonService {
       const data = {
         timestamp: Date.now(),
         controlMode: this.currentState?.controlMode || "auto",
-        signalSequences: this.signalSequences,
-        signalStatus: this.signalStatus,
-        timeZones: this.timeZones,
-        priorities: this.priorities,
-        manualOverride: this.manualOverride,
+        ipAddresses: this.ipAddresses,
+        poles: this.currentState?.poles || {},
+        timeZones: this.currentState?.timeZones || [],
+        priorities: this.currentState?.priorities || {},
         lastCommand: this.lastCommand,
         lastState: this.lastState,
       }
@@ -712,53 +711,116 @@ class JsonService {
         return true
       }
 
-      // Send the data to the Raspberry Pi webhook
-      const raspberryPiWebhookUrl = `http://${this.ipAddresses.RaspberryPi || "192.168.1.100"}:8080/webhook`
+      // Try Ethernet connection first (direct IP)
+      let success = false
+      let ethernetError = null
 
-      // Create a signature for authentication
-      const signature = await this.createSignature(jsonData)
+      try {
+        // Create a signature for authentication
+        const signature = await this.createSignature(jsonData)
 
-      console.log(`Sending JSON configuration to: ${raspberryPiWebhookUrl}`)
+        // Try to send via Ethernet (direct IP)
+        const ethernetUrl = `http://${this.ipAddresses.RaspberryPi || "192.168.1.100"}:8080/webhook`
+        console.log(`Trying Ethernet connection to: ${ethernetUrl}`)
 
-      // Use a timeout to prevent hanging requests
-      const controller = new AbortController()
-      const timeoutId = setTimeout(() => controller.abort(), 5000) // 5 second timeout
+        // Use a timeout to prevent hanging requests
+        const controller = new AbortController()
+        const timeoutId = setTimeout(() => controller.abort(), 5000) // 5 second timeout
 
-      const response = await fetch(raspberryPiWebhookUrl, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          "X-Signature": signature,
-        },
-        body: jsonData,
-        signal: controller.signal,
-      })
+        const response = await fetch(ethernetUrl, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            "X-Signature": signature,
+          },
+          body: jsonData,
+          signal: controller.signal,
+        })
 
-      clearTimeout(timeoutId)
+        clearTimeout(timeoutId)
 
-      if (response.ok) {
-        console.log(`JSON configuration sent successfully to Raspberry Pi`)
-        return true
-      } else {
-        console.error(`Error sending JSON configuration to Raspberry Pi: ${response.status} ${response.statusText}`)
+        if (response.ok) {
+          console.log(`JSON configuration sent successfully via Ethernet`)
+          success = true
+          this.setConnectionStatus("connected")
+          return true
+        } else {
+          ethernetError = `Error sending JSON configuration via Ethernet: ${response.status} ${response.statusText}`
+          console.warn(ethernetError)
+        }
+      } catch (error) {
+        ethernetError = `Network error sending JSON configuration via Ethernet: ${error}`
+        console.warn(ethernetError)
+      }
+
+      // If Ethernet failed, try network connection
+      if (!success) {
+        try {
+          console.log("Ethernet connection failed, trying network connection...")
+
+          // Create a signature for authentication
+          const signature = await this.createSignature(jsonData)
+
+          // Try to send via network (hostname or domain)
+          const networkUrl = `http://traffic-controller.local:8080/webhook`
+          console.log(`Trying network connection to: ${networkUrl}`)
+
+          // Use a timeout to prevent hanging requests
+          const controller = new AbortController()
+          const timeoutId = setTimeout(() => controller.abort(), 8000) // 8 second timeout for network
+
+          const response = await fetch(networkUrl, {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+              "X-Signature": signature,
+            },
+            body: jsonData,
+            signal: controller.signal,
+          })
+
+          clearTimeout(timeoutId)
+
+          if (response.ok) {
+            console.log(`JSON configuration sent successfully via network`)
+            success = true
+            this.setConnectionStatus("connected")
+            return true
+          } else {
+            console.error(`Error sending JSON configuration via network: ${response.status} ${response.statusText}`)
+            this.setConnectionStatus("error")
+          }
+        } catch (error) {
+          console.error("Network error sending JSON configuration via network:", error)
+          this.setConnectionStatus("error")
+
+          // If we're in development/preview mode but the flag wasn't set correctly,
+          // let's handle the error gracefully
+          if (
+            typeof window !== "undefined" &&
+            (window.location.hostname === "localhost" ||
+              window.location.hostname.includes("vercel.app") ||
+              window.location.hostname.includes("preview"))
+          ) {
+            console.log("Network error in preview/development mode. Treating as success for UI functionality.")
+            this.isPreviewMode = true // Update the flag for future calls
+            setTimeout(() => this.setConnectionStatus("connected"), 1000)
+            return true
+          }
+        }
+      }
+
+      // If both methods failed
+      if (!success) {
+        console.error("Failed to send JSON configuration to Raspberry Pi via both Ethernet and network")
+        this.setConnectionStatus("error")
         return false
       }
+
+      return success
     } catch (error) {
       console.error("Error sending JSON configuration to Raspberry Pi:", error)
-
-      // If we're in development/preview mode but the flag wasn't set correctly,
-      // let's handle the error gracefully
-      if (
-        typeof window !== "undefined" &&
-        (window.location.hostname === "localhost" ||
-          window.location.hostname.includes("vercel.app") ||
-          window.location.hostname.includes("preview"))
-      ) {
-        console.log("Network error in preview/development mode. Treating as success for UI functionality.")
-        this.isPreviewMode = true // Update the flag for future calls
-        return true
-      }
-
+      this.setConnectionStatus("error")
       return false
     }
   }
