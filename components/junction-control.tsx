@@ -675,18 +675,18 @@ export default function JunctionControl() {
                     : "bg-yellow-500"
               }`}
             ></div>
-            <span className="text-xs font-medium capitalize">{connectionStatus}</span>
+            <span className="text-xs font-medium capitalize text-black">{connectionStatus}</span>
           </div>
 
           {/* Time and Active Time Zone Display */}
           <div className="absolute top-2 left-2 flex flex-col gap-1">
             <div className="bg-white px-3 py-1 rounded-full shadow-md flex items-center gap-2">
               <div className="w-3 h-3 rounded-full bg-blue-500 animate-pulse"></div>
-              <span className="text-sm font-medium">{currentTime.toLocaleTimeString()}</span>
+              <span className="text-sm font-medium text-black">{currentTime.toLocaleTimeString()}</span>
             </div>
             {activeTimeZone !== null ? (
               <div className="bg-white px-3 py-1 rounded-full shadow-md">
-                <span className="text-xs font-medium">
+                <span className="text-xs font-medium text-black">
                   Active: {timeZones.find((zone) => zone.id === activeTimeZone)?.name || `Time Zone ${activeTimeZone}`}
                 </span>
               </div>
