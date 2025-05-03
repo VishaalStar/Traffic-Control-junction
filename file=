@@ -1,0 +1,78 @@
+raspberry_pi/traffic_json_receiver.py"# Add this function to convert the received JSON to the required format
+def convert_json_to_variables(json_data):
+    """Convert JSON data to the required variable format"""
+    result = {}
+    
+    # Set URLs for each pole
+    result["url_1A"] = "http://192.168.1.11"
+    result["url_1B"] = "http://192.168.1.12"
+    result["url_2A"] = "http://192.168.1.13"
+    result["url_2B"] = "http://192.168.1.14"
+    result["url_3A"] = "http://192.168.1.15"
+    result["url_3B"] = "http://192.168.1.16"
+    result["url_4A"] = "http://192.168.1.17"
+    result["url_4B"] = "http://192.168.1.18"
+    
+    # Set control modes
+    control_mode = json_data.get("controlMode", "auto")
+    result["manualcontrol_mode"] = control_mode == "manual"
+    result["autocontrol_mode"] = control_mode == "auto"
+    result["semicontrol_mode"] = control_mode == "semi"
+    
+    # Process signal status for manual control
+    signal_status = json_data.get("signalStatus", {})
+    for pole, status in signal_status.items():
+        # Convert pole name format (e.g., P1A to 1A)
+        pole_name = pole[1:] if pole.startswith("P") else pole
+        
+        # Set all signals to False initially
+        result[f"manual_control_pole_{pole_name}_red_light"] = False
+        result[f"manual_control_pole_{pole_name}_yel_light"] = False
+        result[f"manual_control_pole_{pole_name}_grnL_light"] = False
+        result[f"manual_control_pole_{pole_name}_grnS_light"] = False
+        result[f"manual_control_pole_{pole_name}_grnR_light"] = False
+        result[f"manual_control_pole_{pole_name}_yel_blink_light"] = False
+        
+        # Set the active signal based on status
+        if status == "red":
+            result[f"manual_control_pole_{pole_name}_red_light"] = True
+        elif status == "yellow":
+            result[f"manual_control_pole_{pole_name}_yel_light"] = True
+        elif status == "greenLeft":
+            result[f"manual_control_pole_{pole_name}_grnL_light"] = True
+        elif status == "greenStraight":
+            result[f"manual_control_pole_{pole_name}_grnS_light"] = True
+        elif status == "greenRight":
+            result[f"manual_control_pole_{pole_name}_grnR_light"] = True
+        elif status == "yellowBlink":
+            result[f"manual_control_pole_{pole_name}_yel_blink_light"] = True
+        elif status == "allGreen":
+            result[f"manual_control_pole_{pole_name}_grnL_light"] = True
+            result[f"manual_control_pole_{pole_name}_grnS_light"] = True
+            result[f"manual_control_pole_{pole_name}_grnR_light"] = True
+    
+    return result
+
+# Update the webhook handler to use this conversion
+@app.route('/webhook', methods=['POST'])
+def webhook():
+    """Handle incoming JSON configuration from the web interface"""
+    try:
+        # Verify the signature
+        signature = request.headers.get('X-Signature')
+        if not verify_signature(request.data, signature):
+            return jsonify({"status": "error", "message": "Invalid signature"}), 401
+        
+        # Parse the JSON data
+        json_data = request.json
+        
+        # Convert to the required format
+        variables = convert_json_to_variables(json_data)
+        
+        # Save the variables to a Python file
+        save_variables_to_file(variables)
+        
+        return jsonify({"status": "success", "message": "Configuration received and processed"}), 200
+    except Exception as e:
+        logging.error(f"Error processing webhook: {e}")
+        return jsonify({"status": "error", "message": str(e)}), 500

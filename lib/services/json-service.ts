@@ -772,6 +772,182 @@ class JsonService {
       return false
     }
   }
+
+  /**
+   * Format data according to the backend variable naming convention
+   */
+  private formatDataForBackend(): any {
+    // Get the current state
+    const currentState = this.currentState || {
+      poles: {},
+      timeZones: [],
+      priorities: {},
+      controlMode: "auto",
+    }
+
+    // Format the data according to the required variable naming convention
+    const formattedData: any = {
+      // URLs for each pole
+      url_1A: "http://192.168.1.11",
+      url_1B: "http://192.168.1.12",
+      url_2A: "http://192.168.1.13",
+      url_2B: "http://192.168.1.14",
+      url_3A: "http://192.168.1.15",
+      url_3B: "http://192.168.1.16",
+      url_4A: "http://192.168.1.17",
+      url_4B: "http://192.168.1.18",
+
+      // Control mode
+      manualcontrol_mode: currentState.controlMode === "manual",
+      autocontrol_mode: currentState.controlMode === "auto",
+      semicontrol_mode: currentState.controlMode === "semi",
+
+      // Common yellow time
+      all_pole_yellow_time: 1, // Default value
+
+      // Yellow blink mode
+      all_pole_yellow_blink: this.lastCommand?.command === "yellow_blink_mode" ? this.lastCommand.value : false,
+
+      // All light blink mode
+      all_pole_all_light_blink: this.lastCommand?.command === "all_light_blink_mode" ? this.lastCommand.value : false,
+
+      // All pole test modes
+      all_pole_red_test: false,
+      all_pole_yellow_test: false,
+      all_pole_green_test: false,
+
+      // Time zone settings
+      use_time_zone: currentState.timeZones && currentState.timeZones.length > 0,
+      total_no_of_time_zones: currentState.timeZones ? currentState.timeZones.length : 1,
+      time_zone_number: 1, // Default to 1 if not specified
+    }
+
+    // Add pole timing data
+    for (const pole of ["1A", "1B", "2A", "2B", "3A", "3B", "4A", "4B"]) {
+      const poleKey = `P${pole}`
+      const poleData = currentState.poles[poleKey] || {}
+      const timePeriods =
+        currentState.timeZones && currentState.timeZones[0] ? currentState.timeZones[0].timePeriods[poleKey] || {} : {}
+
+      formattedData[`pole_${pole}_red_time`] = timePeriods.red || 1
+      formattedData[`pole_${pole}_yel_time`] = timePeriods.yellow || 6
+      formattedData[`pole_${pole}_grnL_time`] = timePeriods.greenLeft || 1
+      formattedData[`pole_${pole}_grnS_time`] = timePeriods.greenStraight || 1
+      formattedData[`pole_${pole}_grnR_time`] = timePeriods.greenRight || 1
+      formattedData[`pole_${pole}_ped_time`] = 1 // Default value
+      formattedData[`pole_${pole}_buz_time`] = 1 // Default value
+
+      // Format green priority
+      const priority = currentState.priorities[poleKey] || { greenLeft: 1, greenStraight: 2, greenRight: 3 }
+      formattedData[`green_priority_pole_${pole}`] =
+        `${priority.greenLeft}${priority.greenStraight}${priority.greenRight}`
+    }
+
+    // Add time zone data
+    if (currentState.timeZones && currentState.timeZones.length > 0) {
+      currentState.timeZones.forEach((zone, index) => {
+        const zoneNumber = index + 1
+        if (zoneNumber <= 8) {
+          // Maximum 8 time zones
+          const startTime = zone.startTime.split(":")
+          const endTime = zone.endTime.split(":")
+
+          formattedData[`time_zone_${zoneNumber}_start_hr`] = Number.parseInt(startTime[0]) || 12
+          formattedData[`time_zone_${zoneNumber}_start_min`] = Number.parseInt(startTime[1]) || 0
+          formattedData[`time_zone_${zoneNumber}_end_hr`] = Number.parseInt(endTime[0]) || 12
+          formattedData[`time_zone_${zoneNumber}_end_min`] = Number.parseInt(endTime[1]) || 0
+
+          // Add blink mode enabled flag for this time zone
+          formattedData[`blink_mode_enabled_time_zone_${zoneNumber}`] = zone.blinkEnabled || false
+
+          // Add route sequence for this time zone
+          formattedData[`route_sequence_${zoneNumber}`] = zone.sequence.split(",").map(Number)
+
+          // Add time periods for each pole in this time zone
+          for (const pole of ["1A", "1B", "2A", "2B", "3A", "3B", "4A", "4B"]) {
+            const poleKey = `P${pole}`
+            const timePeriods = zone.timePeriods[poleKey] || {}
+
+            formattedData[`pole_${pole}_red_time_time_zone_${zoneNumber}`] = timePeriods.red || 1
+            formattedData[`pole_${pole}_yel_time_time_zone_${zoneNumber}`] = timePeriods.yellow || 6
+            formattedData[`pole_${pole}_grnL_time_time_zone_${zoneNumber}`] = timePeriods.greenLeft || 1
+            formattedData[`pole_${pole}_grnS_time_time_zone_${zoneNumber}`] = timePeriods.greenStraight || 1
+            formattedData[`pole_${pole}_grnR_time_time_zone_${zoneNumber}`] = timePeriods.greenRight || 1
+            formattedData[`pole_${pole}_ped_time_time_zone_${zoneNumber}`] = 1 // Default value
+            formattedData[`pole_${pole}_buz_time_time_zone_${zoneNumber}`] = 1 // Default value
+          }
+        }
+      })
+    }
+
+    // Add signal states for manual control
+    for (const pole of ["1A", "1B", "2A", "2B", "3A", "3B", "4A", "4B"]) {
+      const poleKey = `P${pole}`
+      const poleState = currentState.poles[poleKey] || {
+        red: false,
+        yellow: false,
+        greenLeft: false,
+        greenStraight: false,
+        greenRight: false,
+      }
+
+      formattedData[`manual_control_pole_${pole}_red_light`] = poleState.red
+      formattedData[`manual_control_pole_${pole}_yel_light`] = poleState.yellow
+      formattedData[`manual_control_pole_${pole}_grnL_light`] = poleState.greenLeft
+      formattedData[`manual_control_pole_${pole}_grnS_light`] = poleState.greenStraight
+      formattedData[`manual_control_pole_${pole}_grnR_light`] = poleState.greenRight
+      formattedData[`manual_control_pole_${pole}_yel_blink_light`] = false // Default value
+    }
+
+    // Generate route matrix based on signal sequences
+    const routeMatrix = this.generateRouteMatrix()
+    if (routeMatrix) {
+      formattedData.route_matrix = routeMatrix
+    }
+
+    return formattedData
+  }
+
+  /**
+   * Generate route matrix from signal sequences
+   */
+  private generateRouteMatrix(): any[] | null {
+    try {
+      const routes = Array.from({ length: 14 }, (_, i) => (i + 1).toString())
+      const matrix = []
+
+      for (const route of routes) {
+        const routeData = []
+        const sequence = this.currentState?.timeZones?.[0]?.sequence || ""
+        const routeSequence = sequence.split(",").map((r) => r.trim())
+
+        if (!routeSequence.includes(route)) {
+          continue // Skip if route is not in the sequence
+        }
+
+        // For each pole, add the signal states
+        for (const pole of ["1A", "1B", "2A", "2B", "3A", "3B", "4A", "4B"]) {
+          const poleKey = `P${pole}`
+          const poleData = this.currentState?.poles[poleKey] || {}
+
+          // Add in order: R, Y, GL, GS, GR, GA
+          routeData.push(poleData.red || false)
+          routeData.push(poleData.yellow || false)
+          routeData.push(poleData.greenLeft || false)
+          routeData.push(poleData.greenStraight || false)
+          routeData.push(poleData.greenRight || false)
+          routeData.push(false) // greenAll is not directly stored
+        }
+
+        matrix.push(routeData)
+      }
+
+      return matrix
+    } catch (error) {
+      console.error("Error generating route matrix:", error)
+      return null
+    }
+  }
 }
 
 // Export a singleton instance

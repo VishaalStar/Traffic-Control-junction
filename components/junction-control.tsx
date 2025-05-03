@@ -104,6 +104,9 @@ export default function JunctionControl() {
   // Add a new state for connection status
   const [connectionStatus, setConnectionStatus] = useState<string>("disconnected")
 
+  const [currentTime, setCurrentTime] = useState(new Date())
+  const [activeTimeZone, setActiveTimeZone] = useState<number | null>(null)
+
   // Function to validate time zones
   const validateTimeZones = () => {
     const errors: string[] = []
@@ -299,6 +302,42 @@ export default function JunctionControl() {
       setTimeout(sendCommands, 0)
     }
   }, [blinkState, isYellowBlinkMode, isAllLightBlinkMode, blinkMode])
+
+  // Add real-time clock and time zone monitoring
+  useEffect(() => {
+    // Update time every second
+    const timer = setInterval(() => {
+      const now = new Date()
+      setCurrentTime(now)
+
+      // Check which time zone is currently active
+      const currentTimeStr = `${now.getHours().toString().padStart(2, "0")}:${now.getMinutes().toString().padStart(2, "0")}`
+
+      let foundActiveZone = false
+      timeZones.forEach((zone) => {
+        // Check if current time falls within this time zone
+        if (zone.startTime <= zone.endTime) {
+          // Simple case: start time is before end time (same day)
+          if (currentTimeStr >= zone.startTime && currentTimeStr < zone.endTime) {
+            setActiveTimeZone(zone.id)
+            foundActiveZone = true
+          }
+        } else {
+          // Complex case: start time is after end time (overnight)
+          if (currentTimeStr >= zone.startTime || currentTimeStr < zone.endTime) {
+            setActiveTimeZone(zone.id)
+            foundActiveZone = true
+          }
+        }
+      })
+
+      if (!foundActiveZone) {
+        setActiveTimeZone(null)
+      }
+    }, 1000)
+
+    return () => clearInterval(timer)
+  }, [timeZones])
 
   const handlePoleSelect = (poleName: string) => {
     setSelectedPole(poleName)
@@ -638,6 +677,25 @@ export default function JunctionControl() {
             ></div>
             <span className="text-xs font-medium capitalize">{connectionStatus}</span>
           </div>
+
+          {/* Time and Active Time Zone Display */}
+          <div className="absolute top-2 left-2 flex flex-col gap-1">
+            <div className="bg-white px-3 py-1 rounded-full shadow-md flex items-center gap-2">
+              <div className="w-3 h-3 rounded-full bg-blue-500 animate-pulse"></div>
+              <span className="text-sm font-medium">{currentTime.toLocaleTimeString()}</span>
+            </div>
+            {activeTimeZone !== null ? (
+              <div className="bg-white px-3 py-1 rounded-full shadow-md">
+                <span className="text-xs font-medium">
+                  Active: {timeZones.find((zone) => zone.id === activeTimeZone)?.name || `Time Zone ${activeTimeZone}`}
+                </span>
+              </div>
+            ) : (
+              <div className="bg-white px-3 py-1 rounded-full shadow-md">
+                <span className="text-xs font-medium text-gray-500">No active time zone</span>
+              </div>
+            )}
+          </div>
         </div>
       </div>
 
@@ -693,26 +751,19 @@ export default function JunctionControl() {
                   </p>
                   <div className="bg-blue-50 border border-blue-200 rounded-md p-3 mt-2">
                     <p className="text-sm text-blue-700">
+                      <strong>Current Time:</strong> {currentTime.toLocaleTimeString()}
+                    </p>
+                    <p className="text-sm text-blue-700 mt-1">
                       <strong>Current Time Zone:</strong>{" "}
-                      {timeZones.find((zone) => {
-                        const now = new Date()
-                        const currentTime = `${now.getHours().toString().padStart(2, "0")}:${now.getMinutes().toString().padStart(2, "0")}`
-                        if (zone.startTime > zone.endTime) {
-                          return currentTime >= zone.startTime || currentTime < zone.endTime
-                        }
-                        return currentTime >= zone.startTime && currentTime < zone.endTime
-                      })?.name || "Default"}
+                      {activeTimeZone !== null
+                        ? timeZones.find((zone) => zone.id === activeTimeZone)?.name || `Time Zone ${activeTimeZone}`
+                        : "Default"}
                     </p>
                     <p className="text-sm text-blue-700 mt-1">
                       <strong>Active Sequence:</strong>{" "}
-                      {timeZones.find((zone) => {
-                        const now = new Date()
-                        const currentTime = `${now.getHours().toString().padStart(2, "0")}:${now.getMinutes().toString().padStart(2, "0")}`
-                        if (zone.startTime > zone.endTime) {
-                          return currentTime >= zone.startTime || currentTime < zone.endTime
-                        }
-                        return currentTime >= zone.startTime && currentTime < zone.endTime
-                      })?.sequence || "Default Sequence"}
+                      {activeTimeZone !== null
+                        ? timeZones.find((zone) => zone.id === activeTimeZone)?.sequence || "Default Sequence"
+                        : "Default Sequence"}
                     </p>
                   </div>
                 </Card>

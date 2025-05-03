@@ -206,44 +206,45 @@ def apply_auto_control(config, GPIO):
         logging.error(f"Error in auto control mode: {e}")
 
 def apply_manual_control(config, GPIO):
-    """Apply manual control mode settings"""
+    """Handle manual control mode settings"""
     if not GPIO:
         logging.info("Simulation mode: Would apply manual control settings")
         return
     
     try:
-        # Get the current signal status for each pole
-        signal_status = config.get("signalStatus", {})
-        
-        for pole, status in signal_status.items():
-            if pole not in GPIO_MAPPING:
-                continue
-                
-            # Turn off all signals first
-            for signal in GPIO_MAPPING[pole]:
-                GPIO.output(GPIO_MAPPING[pole][signal], GPIO.LOW)
+        # Process manual control variables in the format manual_control_pole_1A_red_light
+        for pole in ["1A", "1B", "2A", "2B", "3A", "3B", "4A", "4B"]:
+            # Map signal types to GPIO mapping keys
+            signal_map = {
+                "red": "red",
+                "yel": "yellow",
+                "grnL": "greenLeft",
+                "grnS": "greenStraight",
+                "grnR": "greenRight",
+                "yel_blink": "yellow"  # Special case for yellow blink
+            }
             
-            # Turn on the active signal
-            if status == "red" and "red" in GPIO_MAPPING[pole]:
-                GPIO.output(GPIO_MAPPING[pole]["red"], GPIO.HIGH)
-            elif status == "yellow" and "yellow" in GPIO_MAPPING[pole]:
-                GPIO.output(GPIO_MAPPING[pole]["yellow"], GPIO.HIGH)
-            elif status == "greenLeft" and "greenLeft" in GPIO_MAPPING[pole]:
-                GPIO.output(GPIO_MAPPING[pole]["greenLeft"], GPIO.HIGH)
-            elif status == "greenStraight" and "greenStraight" in GPIO_MAPPING[pole]:
-                GPIO.output(GPIO_MAPPING[pole]["greenStraight"], GPIO.HIGH)
-            elif status == "greenRight" and "greenRight" in GPIO_MAPPING[pole]:
-                GPIO.output(GPIO_MAPPING[pole]["greenRight"], GPIO.HIGH)
-            elif status == "allGreen":
-                if "greenLeft" in GPIO_MAPPING[pole]:
-                    GPIO.output(GPIO_MAPPING[pole]["greenLeft"], GPIO.HIGH)
-                if "greenStraight" in GPIO_MAPPING[pole]:
-                    GPIO.output(GPIO_MAPPING[pole]["greenStraight"], GPIO.HIGH)
-                if "greenRight" in GPIO_MAPPING[pole]:
-                    GPIO.output(GPIO_MAPPING[pole]["greenRight"], GPIO.HIGH)
-    
+            # Check each signal type
+            for signal_type, gpio_key in signal_map.items():
+                var_name = f"manual_control_pole_{pole}_{signal_type}_light"
+                
+                if var_name in config:
+                    light_state = config[var_name]
+                    
+                    # Handle special case for yellow blink
+                    if signal_type == "yel_blink" and light_state:
+                        #self._set_yellow_blink(pole) #Removed self
+                        continue
+                    
+                    # Normal light control
+                    if pole in GPIO_MAPPING and gpio_key in GPIO_MAPPING[pole]:
+                        pin = GPIO_MAPPING[pole][gpio_key]
+                        GPIO.output(pin, GPIO.HIGH if light_state else GPIO.LOW)
+        
+        # Sleep to prevent rapid changes
+        time.sleep(0.5)
     except Exception as e:
-        logging.error(f"Error in manual control mode: {e}")
+        logging.error(f"Error in manual control: {e}")
 
 def apply_semi_control(config, GPIO):
     """Apply semi-automatic control mode settings"""

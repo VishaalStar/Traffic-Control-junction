@@ -27,145 +27,145 @@ import { InfoIcon } from "lucide-react"
 
 // Initial signal sequence data structure based on the chart
 const initialSignalSequences = {
-  1: {
-    P1A: { red: "1", yellow: "", greenLeft: "1", greenStraight: "1", greenRight: "1", greenAll: "" },
-    P1B: { red: "1", yellow: "", greenLeft: "1", greenStraight: "1", greenRight: "1", greenAll: "" },
-    P2A: { red: "1", yellow: "", greenLeft: "1", greenStraight: "1", greenRight: "1", greenAll: "" },
-    P2B: { red: "1", yellow: "", greenLeft: "1", greenStraight: "1", greenRight: "1", greenAll: "" },
-    P3A: { red: "1", yellow: "", greenLeft: "1", greenStraight: "1", greenRight: "1", greenAll: "" },
-    P3B: { red: "1", yellow: "", greenLeft: "1", greenStraight: "1", greenRight: "1", greenAll: "" },
-    P4A: { red: "1", yellow: "", greenLeft: "1", greenStraight: "1", greenRight: "1", greenAll: "" },
-    P4B: { red: "1", yellow: "", greenLeft: "1", greenStraight: "1", greenRight: "1", greenAll: "" },
+  "1": {
+    P1A: { red: "1", yellow: "1", greenLeft: "0", greenStraight: "0", greenRight: "0", greenAll: "0" },
+    P1B: { red: "1", yellow: "1", greenLeft: "0", greenStraight: "0", greenRight: "0", greenAll: "1" },
+    P2A: { red: "0", yellow: "1", greenLeft: "0", greenStraight: "0", greenRight: "0", greenAll: "0" },
+    P2B: { red: "0", yellow: "1", greenLeft: "0", greenStraight: "0", greenRight: "0", greenAll: "0" },
+    P3A: { red: "0", yellow: "1", greenLeft: "0", greenStraight: "0", greenRight: "0", greenAll: "0" },
+    P3B: { red: "0", yellow: "1", greenLeft: "0", greenStraight: "0", greenRight: "0", greenAll: "0" },
+    P4A: { red: "0", yellow: "1", greenLeft: "0", greenStraight: "0", greenRight: "0", greenAll: "0" },
+    P4B: { red: "0", yellow: "1", greenLeft: "0", greenStraight: "0", greenRight: "0", greenAll: "0" },
   },
-  2: {
-    P1A: { red: "2", yellow: "", greenLeft: "2", greenStraight: "1", greenRight: "1", greenAll: "" },
-    P1B: { red: "2", yellow: "", greenLeft: "2", greenStraight: "1", greenRight: "1", greenAll: "" },
-    P2A: { red: "2", yellow: "", greenLeft: "2", greenStraight: "1", greenRight: "1", greenAll: "" },
-    P2B: { red: "2", yellow: "", greenLeft: "2", greenStraight: "1", greenRight: "1", greenAll: "" },
-    P3A: { red: "2", yellow: "", greenLeft: "2", greenStraight: "1", greenRight: "1", greenAll: "" },
-    P3B: { red: "2", yellow: "", greenLeft: "2", greenStraight: "1", greenRight: "1", greenAll: "" },
-    P4A: { red: "2", yellow: "", greenLeft: "2", greenStraight: "1", greenRight: "1", greenAll: "" },
-    P4B: { red: "2", yellow: "", greenLeft: "2", greenStraight: "1", greenRight: "1", greenAll: "" },
+  "2": {
+    P1A: { red: "0", yellow: "1", greenLeft: "0", greenStraight: "1", greenRight: "0", greenAll: "0" },
+    P1B: { red: "0", yellow: "1", greenLeft: "0", greenStraight: "1", greenRight: "0", greenAll: "0" },
+    P2A: { red: "1", yellow: "1", greenLeft: "0", greenStraight: "0", greenRight: "0", greenAll: "0" },
+    P2B: { red: "1", yellow: "1", greenLeft: "0", greenStraight: "0", greenRight: "0", greenAll: "0" },
+    P3A: { red: "1", yellow: "1", greenLeft: "0", greenStraight: "0", greenRight: "0", greenAll: "0" },
+    P3B: { red: "1", yellow: "1", greenLeft: "0", greenStraight: "0", greenRight: "0", greenAll: "0" },
+    P4A: { red: "1", yellow: "1", greenLeft: "0", greenStraight: "0", greenRight: "0", greenAll: "0" },
+    P4B: { red: "1", yellow: "1", greenLeft: "0", greenStraight: "0", greenRight: "0", greenAll: "0" },
   },
-  3: {
-    P1A: { red: "3", yellow: "", greenLeft: "3", greenStraight: "1", greenRight: "1", greenAll: "" },
-    P1B: { red: "3", yellow: "", greenLeft: "3", greenStraight: "1", greenRight: "1", greenAll: "" },
-    P2A: { red: "3", yellow: "", greenLeft: "3", greenStraight: "1", greenRight: "1", greenAll: "1" },
-    P2B: { red: "3", yellow: "", greenLeft: "3", greenStraight: "1", greenRight: "1", greenAll: "1" },
-    P3A: { red: "3", yellow: "", greenLeft: "3", greenStraight: "1", greenRight: "1", greenAll: "" },
-    P3B: { red: "3", yellow: "", greenLeft: "3", greenStraight: "1", greenRight: "1", greenAll: "" },
-    P4A: { red: "3", yellow: "", greenLeft: "3", greenStraight: "1", greenRight: "1", greenAll: "" },
-    P4B: { red: "3", yellow: "", greenLeft: "3", greenStraight: "1", greenRight: "1", greenAll: "" },
+  "3": {
+    P1A: { red: "0", yellow: "1", greenLeft: "0", greenStraight: "0", greenRight: "1", greenAll: "0" },
+    P1B: { red: "0", yellow: "1", greenLeft: "0", greenStraight: "0", greenRight: "1", greenAll: "0" },
+    P2A: { red: "1", yellow: "1", greenLeft: "0", greenStraight: "0", greenRight: "0", greenAll: "0" },
+    P2B: { red: "1", yellow: "1", greenLeft: "0", greenStraight: "0", greenRight: "0", greenAll: "0" },
+    P3A: { red: "1", yellow: "1", greenLeft: "0", greenStraight: "0", greenRight: "0", greenAll: "0" },
+    P3B: { red: "1", yellow: "1", greenLeft: "0", greenStraight: "0", greenRight: "0", greenAll: "0" },
+    P4A: { red: "1", yellow: "1", greenLeft: "0", greenStraight: "0", greenRight: "0", greenAll: "0" },
+    P4B: { red: "1", yellow: "1", greenLeft: "0", greenStraight: "0", greenRight: "0", greenAll: "0" },
   },
-  4: {
-    P1A: { red: "4", yellow: "", greenLeft: "4", greenStraight: "1", greenRight: "1", greenAll: "" },
-    P1B: { red: "4", yellow: "", greenLeft: "4", greenStraight: "1", greenRight: "1", greenAll: "" },
-    P2A: { red: "4", yellow: "", greenLeft: "4", greenStraight: "1", greenRight: "1", greenAll: "" },
-    P2B: { red: "4", yellow: "", greenLeft: "4", greenStraight: "1", greenRight: "1", greenAll: "" },
-    P3A: { red: "4", yellow: "", greenLeft: "4", greenStraight: "1", greenRight: "1", greenAll: "" },
-    P3B: { red: "4", yellow: "", greenLeft: "4", greenStraight: "1", greenRight: "1", greenAll: "" },
-    P4A: { red: "4", yellow: "", greenLeft: "4", greenStraight: "1", greenRight: "1", greenAll: "" },
-    P4B: { red: "4", yellow: "", greenLeft: "4", greenStraight: "1", greenRight: "1", greenAll: "" },
+  "4": {
+    P1A: { red: "1", yellow: "1", greenLeft: "0", greenStraight: "0", greenRight: "0", greenAll: "0" },
+    P1B: { red: "1", yellow: "1", greenLeft: "0", greenStraight: "0", greenRight: "0", greenAll: "0" },
+    P2A: { red: "0", yellow: "1", greenLeft: "0", greenStraight: "0", greenRight: "1", greenAll: "0" },
+    P2B: { red: "0", yellow: "1", greenLeft: "0", greenStraight: "0", greenRight: "1", greenAll: "0" },
+    P3A: { red: "1", yellow: "1", greenLeft: "0", greenStraight: "0", greenRight: "0", greenAll: "0" },
+    P3B: { red: "1", yellow: "1", greenLeft: "0", greenStraight: "0", greenRight: "0", greenAll: "0" },
+    P4A: { red: "1", yellow: "1", greenLeft: "0", greenStraight: "0", greenRight: "0", greenAll: "0" },
+    P4B: { red: "1", yellow: "1", greenLeft: "0", greenStraight: "0", greenRight: "0", greenAll: "0" },
   },
-  5: {
-    P1A: { red: "5", yellow: "", greenLeft: "5", greenStraight: "1", greenRight: "1", greenAll: "" },
-    P1B: { red: "5", yellow: "", greenLeft: "5", greenStraight: "1", greenRight: "1", greenAll: "" },
-    P2A: { red: "5", yellow: "", greenLeft: "5", greenStraight: "1", greenRight: "1", greenAll: "" },
-    P2B: { red: "5", yellow: "", greenLeft: "5", greenStraight: "1", greenRight: "1", greenAll: "" },
-    P3A: { red: "5", yellow: "", greenLeft: "5", greenStraight: "1", greenRight: "1", greenAll: "" },
-    P3B: { red: "5", yellow: "", greenLeft: "5", greenStraight: "1", greenRight: "1", greenAll: "" },
-    P4A: { red: "5", yellow: "", greenLeft: "5", greenStraight: "1", greenRight: "1", greenAll: "" },
-    P4B: { red: "5", yellow: "", greenLeft: "5", greenStraight: "1", greenRight: "1", greenAll: "" },
+  "5": {
+    P1A: { red: "1", yellow: "1", greenLeft: "0", greenStraight: "0", greenRight: "0", greenAll: "0" },
+    P1B: { red: "1", yellow: "1", greenLeft: "0", greenStraight: "0", greenRight: "0", greenAll: "0" },
+    P2A: { red: "0", yellow: "1", greenLeft: "0", greenStraight: "0", greenRight: "1", greenAll: "0" },
+    P2B: { red: "0", yellow: "1", greenLeft: "0", greenStraight: "0", greenRight: "1", greenAll: "0" },
+    P3A: { red: "1", yellow: "1", greenLeft: "0", greenStraight: "0", greenRight: "0", greenAll: "0" },
+    P3B: { red: "1", yellow: "1", greenLeft: "0", greenStraight: "0", greenRight: "0", greenAll: "0" },
+    P4A: { red: "1", yellow: "1", greenLeft: "0", greenStraight: "0", greenRight: "0", greenAll: "0" },
+    P4B: { red: "1", yellow: "1", greenLeft: "0", greenStraight: "0", greenRight: "0", greenAll: "0" },
   },
-  6: {
-    P1A: { red: "6", yellow: "", greenLeft: "6", greenStraight: "1", greenRight: "1", greenAll: "" },
-    P1B: { red: "6", yellow: "", greenLeft: "6", greenStraight: "1", greenRight: "1", greenAll: "" },
-    P2A: { red: "6", yellow: "", greenLeft: "6", greenStraight: "1", greenRight: "1", greenAll: "" },
-    P2B: { red: "6", yellow: "", greenLeft: "6", greenStraight: "1", greenRight: "1", greenAll: "" },
-    P3A: { red: "6", yellow: "", greenLeft: "6", greenStraight: "1", greenRight: "1", greenAll: "" },
-    P3B: { red: "6", yellow: "", greenLeft: "6", greenStraight: "1", greenRight: "1", greenAll: "" },
-    P4A: { red: "6", yellow: "", greenLeft: "6", greenStraight: "1", greenRight: "1", greenAll: "" },
-    P4B: { red: "6", yellow: "", greenLeft: "6", greenStraight: "1", greenRight: "1", greenAll: "" },
+  "6": {
+    P1A: { red: "1", yellow: "1", greenLeft: "0", greenStraight: "0", greenRight: "0", greenAll: "0" },
+    P1B: { red: "1", yellow: "1", greenLeft: "0", greenStraight: "0", greenRight: "0", greenAll: "0" },
+    P2A: { red: "0", yellow: "1", greenLeft: "0", greenStraight: "0", greenRight: "1", greenAll: "0" },
+    P2B: { red: "0", yellow: "1", greenLeft: "0", greenStraight: "0", greenRight: "1", greenAll: "0" },
+    P3A: { red: "1", yellow: "1", greenLeft: "0", greenStraight: "0", greenRight: "0", greenAll: "0" },
+    P3B: { red: "1", yellow: "1", greenLeft: "0", greenStraight: "0", greenRight: "0", greenAll: "0" },
+    P4A: { red: "1", yellow: "1", greenLeft: "0", greenStraight: "0", greenRight: "0", greenAll: "0" },
+    P4B: { red: "1", yellow: "1", greenLeft: "0", greenStraight: "0", greenRight: "0", greenAll: "0" },
   },
-  7: {
-    P1A: { red: "7", yellow: "", greenLeft: "7", greenStraight: "1", greenRight: "0", greenAll: "" },
-    P1B: { red: "7", yellow: "", greenLeft: "7", greenStraight: "0", greenRight: "1", greenAll: "" },
-    P2A: { red: "7", yellow: "", greenLeft: "7", greenStraight: "0", greenRight: "1", greenAll: "" },
-    P2B: { red: "7", yellow: "", greenLeft: "7", greenStraight: "0", greenRight: "1", greenAll: "" },
-    P3A: { red: "7", yellow: "", greenLeft: "7", greenStraight: "0", greenRight: "1", greenAll: "" },
-    P3B: { red: "7", yellow: "", greenLeft: "7", greenStraight: "0", greenRight: "1", greenAll: "" },
-    P4A: { red: "7", yellow: "", greenLeft: "7", greenStraight: "0", greenRight: "1", greenAll: "" },
-    P4B: { red: "7", yellow: "", greenLeft: "7", greenStraight: "0", greenRight: "1", greenAll: "" },
+  "7": {
+    P1A: { red: "1", yellow: "1", greenLeft: "0", greenStraight: "0", greenRight: "0", greenAll: "0" },
+    P1B: { red: "1", yellow: "1", greenLeft: "0", greenStraight: "0", greenRight: "0", greenAll: "0" },
+    P2A: { red: "1", yellow: "1", greenLeft: "0", greenStraight: "0", greenRight: "0", greenAll: "1" },
+    P2B: { red: "1", yellow: "1", greenLeft: "0", greenStraight: "0", greenRight: "0", greenAll: "0" },
+    P3A: { red: "1", yellow: "1", greenLeft: "0", greenStraight: "0", greenRight: "0", greenAll: "0" },
+    P3B: { red: "1", yellow: "1", greenLeft: "0", greenStraight: "0", greenRight: "0", greenAll: "0" },
+    P4A: { red: "1", yellow: "1", greenLeft: "0", greenStraight: "0", greenRight: "0", greenAll: "0" },
+    P4B: { red: "1", yellow: "1", greenLeft: "0", greenStraight: "0", greenRight: "0", greenAll: "0" },
   },
-  8: {
-    P1A: { red: "8", yellow: "", greenLeft: "8", greenStraight: "", greenRight: "", greenAll: "A" },
-    P1B: { red: "8", yellow: "", greenLeft: "8", greenStraight: "", greenRight: "", greenAll: "A" },
-    P2A: { red: "8", yellow: "", greenLeft: "8", greenStraight: "", greenRight: "", greenAll: "A" },
-    P2B: { red: "8", yellow: "", greenLeft: "8", greenStraight: "", greenRight: "", greenAll: "A" },
-    P3A: { red: "8", yellow: "", greenLeft: "8", greenStraight: "", greenRight: "", greenAll: "A" },
-    P3B: { red: "8", yellow: "", greenLeft: "8", greenStraight: "", greenRight: "", greenAll: "A" },
-    P4A: { red: "8", yellow: "", greenLeft: "8", greenStraight: "", greenRight: "", greenAll: "A" },
-    P4B: { red: "8", yellow: "", greenLeft: "8", greenStraight: "", greenRight: "", greenAll: "A" },
+  "8": {
+    P1A: { red: "0", yellow: "1", greenLeft: "1", greenStraight: "1", greenRight: "1", greenAll: "1" },
+    P1B: { red: "0", yellow: "1", greenLeft: "1", greenStraight: "1", greenRight: "1", greenAll: "1" },
+    P2A: { red: "1", yellow: "1", greenLeft: "0", greenStraight: "0", greenRight: "0", greenAll: "0" },
+    P2B: { red: "1", yellow: "1", greenLeft: "0", greenStraight: "0", greenRight: "0", greenAll: "0" },
+    P3A: { red: "0", yellow: "1", greenLeft: "0", greenStraight: "0", greenRight: "1", greenAll: "0" },
+    P3B: { red: "0", yellow: "1", greenLeft: "0", greenStraight: "0", greenRight: "1", greenAll: "0" },
+    P4A: { red: "0", yellow: "1", greenLeft: "1", greenStraight: "1", greenRight: "1", greenAll: "1" },
+    P4B: { red: "0", yellow: "1", greenLeft: "1", greenStraight: "1", greenRight: "1", greenAll: "1" },
   },
-  9: {
-    P1A: { red: "9", yellow: "", greenLeft: "9", greenStraight: "1", greenRight: "1", greenAll: "" },
-    P1B: { red: "9", yellow: "", greenLeft: "9", greenStraight: "1", greenRight: "1", greenAll: "" },
-    P2A: { red: "9", yellow: "", greenLeft: "9", greenStraight: "1", greenRight: "1", greenAll: "" },
-    P2B: { red: "9", yellow: "", greenLeft: "9", greenStraight: "1", greenRight: "1", greenAll: "" },
-    P3A: { red: "9", yellow: "", greenLeft: "9", greenStraight: "1", greenRight: "1", greenAll: "" },
-    P3B: { red: "9", yellow: "", greenLeft: "9", greenStraight: "1", greenRight: "1", greenAll: "" },
-    P4A: { red: "9", yellow: "", greenLeft: "9", greenStraight: "1", greenRight: "1", greenAll: "" },
-    P4B: { red: "9", yellow: "", greenLeft: "9", greenStraight: "1", greenRight: "1", greenAll: "" },
+  "9": {
+    P1A: { red: "1", yellow: "1", greenLeft: "0", greenStraight: "0", greenRight: "0", greenAll: "0" },
+    P1B: { red: "1", yellow: "1", greenLeft: "0", greenStraight: "0", greenRight: "0", greenAll: "0" },
+    P2A: { red: "0", yellow: "1", greenLeft: "0", greenStraight: "1", greenRight: "0", greenAll: "0" },
+    P2B: { red: "0", yellow: "1", greenLeft: "0", greenStraight: "1", greenRight: "0", greenAll: "0" },
+    P3A: { red: "0", yellow: "1", greenLeft: "0", greenStraight: "1", greenRight: "0", greenAll: "0" },
+    P3B: { red: "0", yellow: "1", greenLeft: "0", greenStraight: "1", greenRight: "0", greenAll: "0" },
+    P4A: { red: "1", yellow: "1", greenLeft: "0", greenStraight: "0", greenRight: "0", greenAll: "0" },
+    P4B: { red: "1", yellow: "1", greenLeft: "0", greenStraight: "0", greenRight: "0", greenAll: "0" },
   },
-  10: {
-    P1A: { red: "10", yellow: "", greenLeft: "10", greenStraight: "1", greenRight: "1", greenAll: "" },
-    P1B: { red: "10", yellow: "", greenLeft: "10", greenStraight: "1", greenRight: "1", greenAll: "" },
-    P2A: { red: "10", yellow: "", greenLeft: "10", greenStraight: "1", greenRight: "1", greenAll: "" },
-    P2B: { red: "10", yellow: "", greenLeft: "10", greenStraight: "1", greenRight: "1", greenAll: "" },
-    P3A: { red: "10", yellow: "", greenLeft: "10", greenStraight: "1", greenRight: "1", greenAll: "" },
-    P3B: { red: "10", yellow: "", greenLeft: "10", greenStraight: "1", greenRight: "1", greenAll: "" },
-    P4A: { red: "10", yellow: "", greenLeft: "10", greenStraight: "1", greenRight: "1", greenAll: "" },
-    P4B: { red: "10", yellow: "", greenLeft: "10", greenStraight: "1", greenRight: "1", greenAll: "" },
+  "10": {
+    P1A: { red: "1", yellow: "1", greenLeft: "0", greenStraight: "0", greenRight: "0", greenAll: "0" },
+    P1B: { red: "1", yellow: "1", greenLeft: "0", greenStraight: "0", greenRight: "0", greenAll: "0" },
+    P2A: { red: "1", yellow: "1", greenLeft: "0", greenStraight: "0", greenRight: "0", greenAll: "0" },
+    P2B: { red: "1", yellow: "1", greenLeft: "0", greenStraight: "0", greenRight: "0", greenAll: "0" },
+    P3A: { red: "0", yellow: "1", greenLeft: "0", greenStraight: "1", greenRight: "0", greenAll: "0" },
+    P3B: { red: "0", yellow: "1", greenLeft: "0", greenStraight: "1", greenRight: "0", greenAll: "0" },
+    P4A: { red: "1", yellow: "1", greenLeft: "0", greenStraight: "0", greenRight: "0", greenAll: "0" },
+    P4B: { red: "1", yellow: "1", greenLeft: "0", greenStraight: "0", greenRight: "0", greenAll: "0" },
   },
-  11: {
-    P1A: { red: "11", yellow: "", greenLeft: "11", greenStraight: "", greenRight: "", greenAll: "A" },
-    P1B: { red: "11", yellow: "", greenLeft: "11", greenStraight: "", greenRight: "", greenAll: "A" },
-    P2A: { red: "11", yellow: "", greenLeft: "11", greenStraight: "", greenRight: "", greenAll: "A" },
-    P2B: { red: "11", yellow: "", greenLeft: "11", greenStraight: "", greenRight: "", greenAll: "A" },
-    P3A: { red: "11", yellow: "", greenLeft: "11", greenStraight: "", greenRight: "", greenAll: "A" },
-    P3B: { red: "11", yellow: "", greenLeft: "11", greenStraight: "", greenRight: "", greenAll: "A" },
-    P4A: { red: "11", yellow: "", greenLeft: "11", greenStraight: "", greenRight: "", greenAll: "A" },
-    P4B: { red: "11", yellow: "", greenLeft: "11", greenStraight: "", greenRight: "", greenAll: "A" },
+  "11": {
+    P1A: { red: "0", yellow: "1", greenLeft: "0", greenStraight: "0", greenRight: "0", greenAll: "1" },
+    P1B: { red: "0", yellow: "1", greenLeft: "1", greenStraight: "1", greenRight: "1", greenAll: "1" },
+    P2A: { red: "1", yellow: "1", greenLeft: "0", greenStraight: "0", greenRight: "0", greenAll: "0" },
+    P2B: { red: "1", yellow: "1", greenLeft: "0", greenStraight: "0", greenRight: "0", greenAll: "0" },
+    P3A: { red: "0", yellow: "1", greenLeft: "1", greenStraight: "0", greenRight: "0", greenAll: "0" },
+    P3B: { red: "0", yellow: "1", greenLeft: "1", greenStraight: "0", greenRight: "0", greenAll: "0" },
+    P4A: { red: "0", yellow: "1", greenLeft: "1", greenStraight: "1", greenRight: "1", greenAll: "1" },
+    P4B: { red: "0", yellow: "1", greenLeft: "1", greenStraight: "1", greenRight: "1", greenAll: "1" },
   },
-  12: {
-    P1A: { red: "12", yellow: "", greenLeft: "12", greenStraight: "1", greenRight: "1", greenAll: "" },
-    P1B: { red: "12", yellow: "", greenLeft: "12", greenStraight: "1", greenRight: "1", greenAll: "" },
-    P2A: { red: "12", yellow: "", greenLeft: "12", greenStraight: "1", greenRight: "1", greenAll: "" },
-    P2B: { red: "12", yellow: "", greenLeft: "12", greenStraight: "1", greenRight: "1", greenAll: "" },
-    P3A: { red: "12", yellow: "", greenLeft: "12", greenStraight: "1", greenRight: "1", greenAll: "" },
-    P3B: { red: "12", yellow: "", greenLeft: "12", greenStraight: "1", greenRight: "1", greenAll: "" },
-    P4A: { red: "12", yellow: "", greenLeft: "12", greenStraight: "1", greenRight: "1", greenAll: "" },
-    P4B: { red: "12", yellow: "", greenLeft: "12", greenStraight: "1", greenRight: "1", greenAll: "" },
+  "12": {
+    P1A: { red: "1", yellow: "1", greenLeft: "0", greenStraight: "0", greenRight: "0", greenAll: "0" },
+    P1B: { red: "1", yellow: "1", greenLeft: "0", greenStraight: "0", greenRight: "0", greenAll: "0" },
+    P2A: { red: "1", yellow: "1", greenLeft: "0", greenStraight: "0", greenRight: "0", greenAll: "0" },
+    P2B: { red: "1", yellow: "1", greenLeft: "0", greenStraight: "0", greenRight: "0", greenAll: "0" },
+    P3A: { red: "1", yellow: "1", greenLeft: "0", greenStraight: "0", greenRight: "0", greenAll: "0" },
+    P3B: { red: "1", yellow: "1", greenLeft: "0", greenStraight: "0", greenRight: "0", greenAll: "0" },
+    P4A: { red: "0", yellow: "1", greenLeft: "0", greenStraight: "1", greenRight: "1", greenAll: "0" },
+    P4B: { red: "0", yellow: "1", greenLeft: "0", greenStraight: "1", greenRight: "1", greenAll: "0" },
   },
-  13: {
-    P1A: { red: "13", yellow: "", greenLeft: "13", greenStraight: "1", greenRight: "1", greenAll: "" },
-    P1B: { red: "13", yellow: "", greenLeft: "13", greenStraight: "1", greenRight: "1", greenAll: "" },
-    P2A: { red: "13", yellow: "", greenLeft: "13", greenStraight: "1", greenRight: "1", greenAll: "" },
-    P2B: { red: "13", yellow: "", greenLeft: "13", greenStraight: "1", greenRight: "1", greenAll: "" },
-    P3A: { red: "13", yellow: "", greenLeft: "13", greenStraight: "1", greenRight: "1", greenAll: "" },
-    P3B: { red: "13", yellow: "", greenLeft: "13", greenStraight: "1", greenRight: "1", greenAll: "" },
-    P4A: { red: "13", yellow: "", greenLeft: "13", greenStraight: "1", greenRight: "1", greenAll: "" },
-    P4B: { red: "13", yellow: "", greenLeft: "13", greenStraight: "1", greenRight: "1", greenAll: "" },
+  "13": {
+    P1A: { red: "1", yellow: "1", greenLeft: "0", greenStraight: "0", greenRight: "0", greenAll: "0" },
+    P1B: { red: "1", yellow: "1", greenLeft: "0", greenStraight: "0", greenRight: "0", greenAll: "0" },
+    P2A: { red: "0", yellow: "1", greenLeft: "1", greenStraight: "1", greenRight: "1", greenAll: "1" },
+    P2B: { red: "0", yellow: "1", greenLeft: "1", greenStraight: "1", greenRight: "1", greenAll: "1" },
+    P3A: { red: "1", yellow: "1", greenLeft: "0", greenStraight: "0", greenRight: "0", greenAll: "0" },
+    P3B: { red: "1", yellow: "1", greenLeft: "0", greenStraight: "0", greenRight: "0", greenAll: "0" },
+    P4A: { red: "0", yellow: "1", greenLeft: "1", greenStraight: "0", greenRight: "0", greenAll: "0" },
+    P4B: { red: "0", yellow: "1", greenLeft: "1", greenStraight: "0", greenRight: "0", greenAll: "0" },
   },
-  14: {
-    P1A: { red: "14", yellow: "", greenLeft: "14", greenStraight: "1", greenRight: "1", greenAll: "" },
-    P1B: { red: "14", yellow: "", greenLeft: "14", greenStraight: "1", greenRight: "1", greenAll: "" },
-    P2A: { red: "14", yellow: "", greenLeft: "14", greenStraight: "1", greenRight: "1", greenAll: "" },
-    P2B: { red: "14", yellow: "", greenLeft: "14", greenStraight: "1", greenRight: "1", greenAll: "" },
-    P3A: { red: "14", yellow: "", greenLeft: "14", greenStraight: "1", greenRight: "1", greenAll: "" },
-    P3B: { red: "14", yellow: "", greenLeft: "14", greenStraight: "1", greenRight: "1", greenAll: "" },
-    P4A: { red: "14", yellow: "", greenLeft: "14", greenStraight: "1", greenRight: "1", greenAll: "" },
-    P4B: { red: "14", yellow: "", greenLeft: "14", greenStraight: "1", greenRight: "1", greenAll: "" },
+  "14": {
+    P1A: { red: "1", yellow: "1", greenLeft: "0", greenStraight: "0", greenRight: "0", greenAll: "0" },
+    P1B: { red: "1", yellow: "1", greenLeft: "0", greenStraight: "0", greenRight: "0", greenAll: "0" },
+    P2A: { red: "0", yellow: "1", greenLeft: "1", greenStraight: "1", greenRight: "1", greenAll: "1" },
+    P2B: { red: "0", yellow: "1", greenLeft: "1", greenStraight: "1", greenRight: "1", greenAll: "1" },
+    P3A: { red: "1", yellow: "1", greenLeft: "0", greenStraight: "0", greenRight: "0", greenAll: "0" },
+    P3B: { red: "1", yellow: "1", greenLeft: "0", greenStraight: "0", greenRight: "0", greenAll: "0" },
+    P4A: { red: "0", yellow: "1", greenLeft: "1", greenStraight: "0", greenRight: "0", greenAll: "0" },
+    P4B: { red: "0", yellow: "1", greenLeft: "1", greenStraight: "0", greenRight: "0", greenAll: "0" },
   },
 }
 
@@ -866,6 +866,7 @@ export default function SequenceControl() {
     setEditDialogOpen(true)
   }
 
+  // Update the handleCellValueChange function to convert values to boolean format
   const handleCellValueChange = (value: string) => {
     if (!editingCell) return
 
@@ -914,6 +915,7 @@ export default function SequenceControl() {
     return errors
   }
 
+  // Update the confirmChange function to ensure it sends data in the correct format
   const confirmChange = async () => {
     if (!pendingChange) return
 
@@ -965,6 +967,21 @@ export default function SequenceControl() {
     setEditingCell(null)
     setValidationErrors({})
 
+    // Format the data according to the required structure
+    const formattedValue = value === "1" ? true : false
+
+    // Create the variable name in the format: manual_control_pole_1A_red_light
+    const signalTypeMap = {
+      red: "red",
+      yellow: "yel",
+      greenLeft: "grnL",
+      greenStraight: "grnS",
+      greenRight: "grnR",
+      greenAll: "yel_blink", // Map greenAll to yel_blink as per the format
+    }
+
+    const variableName = `manual_control_pole_${pole}_${signalTypeMap[signal]}_light`
+
     // Send the updated sequence to the JSON service
     jsonService.sendCommand({
       command: "update_sequence_cell",
@@ -975,13 +992,15 @@ export default function SequenceControl() {
         pole,
         signal,
         value,
+        formattedValue,
+        variableName,
         reflectMode: reflectMode, // Include reflect mode in the command
       },
     })
 
     toast({
       title: "JSON Data Updated",
-      description: `Updated ${signal} for ${pole}${reflectMode ? " and its corresponding pole" : ""} in Route ${route} to ${value || "empty"} in JSON data.`,
+      description: `Updated ${signal} for ${pole}${reflectMode ? " and its corresponding pole" : ""} in Route ${route} to ${value === "1" ? "ON" : "OFF"} in JSON data.`,
     })
 
     // If the active route was modified, update the display
@@ -1697,10 +1716,6 @@ export default function SequenceControl() {
           <div className="py-4">
             <RadioGroup defaultValue="" className="space-y-2" onValueChange={handleCellValueChange}>
               <div className="flex items-center space-x-2">
-                <RadioGroupItem value="" id="empty" />
-                <Label htmlFor="empty">Empty (No value)</Label>
-              </div>
-              <div className="flex items-center space-x-2">
                 <RadioGroupItem value="1" id="on" />
                 <Label htmlFor="on" className="text-green-600 font-medium">
                   ON (1) - Signal is active
@@ -1708,31 +1723,7 @@ export default function SequenceControl() {
               </div>
               <div className="flex items-center space-x-2">
                 <RadioGroupItem value="0" id="off" />
-                <Label htmlFor="off">OFF (0) - Signal is explicitly turned off</Label>
-              </div>
-              <div className="flex items-center space-x-2">
-                <RadioGroupItem value="A" id="all-green" />
-                <Label htmlFor="all-green" className="text-green-600 font-medium">
-                  ALL GREEN ON (A) - Can coexist with individual green signals
-                </Label>
-              </div>
-              <div className="flex items-center space-x-2">
-                <RadioGroupItem value="X" id="not-used" />
-                <Label htmlFor="not-used" className="text-orange-600">
-                  Light Not Used (X)
-                </Label>
-              </div>
-              <div className="flex items-center space-x-2">
-                <RadioGroupItem value="C" id="compulsory-off" />
-                <Label htmlFor="compulsory-off" className="text-orange-600 font-medium">
-                  COMPULSORY OFF (C)
-                </Label>
-              </div>
-              <div className="flex items-center space-x-2">
-                <RadioGroupItem value="D" id="compulsory-on" />
-                <Label htmlFor="compulsory-on" className="text-orange-600 font-medium">
-                  COMPULSORY ON (D)
-                </Label>
+                <Label htmlFor="off">OFF (0) - Signal is inactive</Label>
               </div>
             </RadioGroup>
           </div>

@@ -71,15 +71,16 @@ class JsonService {
   private static instance: JsonService
   private lastCommand: TrafficCommand | null = null
   private lastState: SystemState | null = null
+  // Update the ipAddresses in the JsonService class to match the provided URLs
   private ipAddresses: Record<string, string> = {
-    P1A: "192.168.1.6",
-    P1B: "192.168.1.7",
-    P2A: "192.168.1.8",
-    P2B: "192.168.1.9",
-    P3A: "192.168.1.10",
-    P3B: "192.168.1.11",
-    P4A: "192.168.1.12",
-    P4B: "192.168.1.13",
+    P1A: "192.168.1.11",
+    P1B: "192.168.1.12",
+    P2A: "192.168.1.13",
+    P2B: "192.168.1.14",
+    P3A: "192.168.1.15",
+    P3B: "192.168.1.16",
+    P4A: "192.168.1.17",
+    P4B: "192.168.1.18",
   }
 
   // Add a new property for the Junction Controller base URL
